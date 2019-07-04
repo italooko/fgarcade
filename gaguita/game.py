@@ -9,9 +9,6 @@ class Player(ge.Player):
 		vx = self.change_x
 		self.change_x = 3
 
-		if self.change_x == 0 :
-			pass
-
 class Game(ge.Platformer):
 	"""
 	Gaguita's Game
@@ -28,29 +25,33 @@ class Game(ge.Platformer):
 	viewport_margin_horizontal = 1500
 	viewport_margin_vertical = 0
 
+	score_coins = 0
+
 	start_sound = arcade.load_sound('gaguita/src/sounds/MattOglseby-3.wav')
 	coin_sound = arcade.load_sound('gaguita/src/sounds/UI1.wav')
 	jump_sound = arcade.load_sound('gaguita/src/sounds/Sword-Swing.wav')
 	die_sound = arcade.load_sound('gaguita/src/sounds/SFX5.ogg')
 
 	def init_world(self, ):
-	
 		arcade.play_sound(self.start_sound)
+
+		self.coins = SpriteList()
+		self.spikes = SpriteList()
+		
+		self.create_object('other/items/yellowCrystal', (2, 1), sprite_list=self.coins) #coin
 		
 		"""
 		Gui's fase
 		Part 1
 		"""
-		
-		self.coin_list = SpriteList()
-		self.spike_list = SpriteList()
-	
 		self.create_arrow('right', (1, 1))
 		self.create_ground(6, coords=(-3, 0))
-		
-		self.create_ground(35, coords=(5, 2)) 
-		"""
-		self.create_ground(3, coords=(5, 2))            
+
+		self.create_ground(35, coords=(5, 2))
+		self.create_ground(2, coords=(7, 4))
+		self.create_ground(90, coords=(7, 5))
+
+		"""self.create_ground(3, coords=(5, 2))            
 		self.create_ground(1, coords=(7, 5))
 		self.create_ground(1, coords=(16, 1))
 		self.create_ground(3, coords=(3, -5))
@@ -67,7 +68,6 @@ class Game(ge.Platformer):
 		self.create_ground(2, coords=(37, 5))
 		#self.create_ground(8, coords=(40, 4))
 		"""
-		
 		"""
 		Italo's fase
 		Part 2
@@ -75,7 +75,7 @@ class Game(ge.Platformer):
 		self.create_tower(3, 17, coords=(42, 0))
 		self.create_foreground('other/plant/red-4', (43, 3))
 		self.create_arrow('right', (45, 3))
-		self.create_object('other/items/yellowCrystal', (46, 6)) #coin
+		self.create_object('other/items/yellowCrystal', (45.5, 6), sprite_list=self.coins) #coin
 		self.create_block('grey', (46, 5))
 		self.create_foreground('other/plant/red-5', (49, 3))
 		self.create_background('other/plant/top-read', (50, 6))
@@ -92,8 +92,8 @@ class Game(ge.Platformer):
 		self.create_background('other/plant/leaf-1', (53, 5))
 		self.create_background('other/plant/stem-vertical', (53, 4))
 		self.create_background('other/plant/leaf-1', (53, 3))
-		self.create_object('other/spikes/spikes-high', (54, 3), sprite_list=self.spike_list) #spike
-		self.create_object('other/items/yellowCrystal', (57, 6)) #coin
+		self.create_object('other/spikes/spikes-high', (54, 3), sprite_list=self.spikes) #spike
+		self.create_object('other/items/yellowCrystal', (56.5, 6)) #coin
 		self.create_block('grey', (57, 5))
 		self.create_foreground('other/plant/red-2', (57, 3))
 		self.create_tower(4, 2, coords=(59, 0)) #smooth_ends=False
@@ -128,7 +128,7 @@ class Game(ge.Platformer):
 		self.create_platform(1, coords=(92, 3))
 		self.create_object('other/items/discGreen', (95, 3)) #life
 		self.create_platform(1, coords=(95, 2))
-		self.create_object('other/items/yellowCrystal', (97, 6)) #coin
+		self.create_object('other/items/yellowCrystal', (97, 6), sprite_list=self.coins) #coin
 		self.create_platform(1, coords=(97, 5))
 
 		self.create_arrow('right', (103, 9))
@@ -137,9 +137,10 @@ class Game(ge.Platformer):
 		self.create_ground(3, coords=(100, 7), end='round')
 		self.create_block('grey', (100, 5))
 
-		self.create_object('other/spikes/spikes-high', (99, 2), sprite_list=self.spike_list) #spike
+		self.create_object('other/spikes/spikes-high', (99, 2), sprite_list=self.spikes) #spike
 		self.create_foreground('other/plant/red-6', (100, 2))
 		self.create_ground(5, coords=(98, 1))
+
 
 		"""
 		self.create_object('other/plant/red-3', (5, 7))
@@ -163,6 +164,38 @@ class Game(ge.Platformer):
 		self.create_fence('right', (62, 7))
 		"""
 
+		"""
+		Gabrie's fase
+		Part 3
+		"""
+		self.create_ground(2, coords=(120, 3))
+		self.create_tower(7, 2, coords=(124, 0))
+		self.create_tower(10, 2, coords=(127, 0))
+		self.create_tower(11, 1, coords=(130, 0))
+		self.create_block('grey', (130, 13))
+		self.create_ground(2, coords=(131, 9))
+		self.create_ground(2, coords=(136, 10))
+		self.create_ground(1, coords=(141, 10))
+		self.create_ground(2, coords=(134, 6))
+		self.create_ground(3, coords=(137, 4))
+		self.create_ground(2, coords=(141, 2))
+		self.create_ground(7, coords=(147, 0))
+		
+		self.create_object('other/items/yellowCrystal', (130, 12), sprite_list=self.coins)
+		self.create_object('other/items/yellowCrystal', (144, 13), sprite_list=self.coins)
+	
+		self.create_foreground('other/plant/red-1', (120, 4))
+		self.create_foreground('other/plant/red-4', (125, 7))
+		self.create_foreground('other/plant/red-3', (130, 11))
+		self.create_foreground('other/plant/red-6', (138, 5))	
+		self.create_arrow('top-right', (132, 10))
+		self.create_background('other/plant/top-read', (149, 4))
+		self.create_background('other/plant/bottom-2', (149, 3))
+		self.create_background('other/plant/stem-vertical', (149, 2))
+		self.create_background('other/plant/leaf-1', (149, 1))
+		self.create_foreground('other/plant/red-5', (151, 1))
+		self.create_foreground('other/plant/red-1', (135, 7))
+
 	def init_enemies(self):
 		pass
 
@@ -174,6 +207,19 @@ class Game(ge.Platformer):
 		self.init_items()
 		self.init_enemies()
 		
+	def collide_coins(self, dt):
+		self.coins.update()
+		
+		coins_hit_list = arcade.check_for_collision_with_list(self.player, self.coins)
+		i = 0
+		for coin in coins_hit_list:
+			coin.remove_from_sprite_lists()
+			arcade.play_sound(self.coin_sound)
+			i += 1
+			if i == 2:
+				self.score_coins += 1
+				i = 0
+
 	def on_update(self, dt):
 		super().on_update(dt)
 		
@@ -185,11 +231,9 @@ class Game(ge.Platformer):
 				arcade.play_sound(self.jump_sound)
 			self.jumping = True
 		else:
-			self.jumping = False		
-			
-		cols = arcade.check_for_collision_with_list(self.player, self.spike_list)
-		if cols:
-			print(cols)
+			self.jumping = False
+		
+		self.collide_coins(dt)
 		
 
 if __name__ == "__main__":

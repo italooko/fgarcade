@@ -64,6 +64,7 @@ class GameWindow(arcade.Window):
         self.draw_background_elements()
         self.draw_elements()
         self.draw_foreground_elements()
+        self.coins.draw()
         arcade.finish_render()
 
     def draw_elements(self):
