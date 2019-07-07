@@ -7,7 +7,8 @@ class Player(ge.Player):
 	def update_actions(self, commands, physics):
 		super().update_actions(commands, physics)
 		vx = self.change_x
-		self.change_x = 3
+		self.change_x =3
+
 
 class Game(ge.Platformer):
 	"""
@@ -18,8 +19,6 @@ class Game(ge.Platformer):
 	width = 1850
 	height = 1000
 	world_theme = 'brown'
-	#background_color = (120, 213, 219)
-	#background_theme = 'yellow'
 	player_initial_tile = -2, 1.5
 	jumping = False
 
@@ -27,29 +26,23 @@ class Game(ge.Platformer):
 	viewport_margin_horizontal = 1500
 	viewport_margin_vertical = 0
 
-	score_coins = 0
-	player_life = 3
-
-	#start_sound = arcade.load_sound('gaguita/src/sounds/MattOglseby-3.wav')
-	coin_sound = arcade.load_sound('gaguita/src/sounds/SFX1.wav')
+	start_sound = arcade.load_sound('gaguita/src/sounds/MattOglseby-3.wav')
+	coin_sound = arcade.load_sound('gaguita/src/sounds/UI1.wav')
 	jump_sound = arcade.load_sound('gaguita/src/sounds/Sword-Swing.wav')
-	lose_life_sound = arcade.load_sound('gaguita/src/sounds/SFX5.wav')
+	die_sound = arcade.load_sound('gaguita/src/sounds/SFX5.ogg')
 
-	def init_world(self):
-		#arcade.play_sound(self.start_sound)
+	def init_world(self, ):
 		
-		self.coins = SpriteList()
-		self.spikes = SpriteList()
-
 		"""
 		Gui's fase
 		Part 1
 		"""
-		self.world_theme = 'green'
-
+	
 		# primeiro bloco
 		self.create_arrow('right', (1, 1))
 		self.create_ground(6, coords=(-3, 0))
+		
+		#self.create_ground(1, coords=(3,2))#APAGAR!!!!!!!!!!!!!!
 
 		# torre / segundo bloco
 		self.create_tower(4, 3, coords=(5, 0))   
@@ -74,7 +67,7 @@ class Game(ge.Platformer):
 		# ground / setimo bloco
 		self.create_ground(2, coords=(31, 6))
 
-		self.create_object('other/items/yellowCrystal', (34, 10), sprite_list=self.coins) #coin
+		self.create_foreground('other/items/yellowCrystal', (34, 10)) #coin
 
 
 # CAMINHO DE BAIXO
@@ -86,7 +79,7 @@ class Game(ge.Platformer):
 
 		# groun / setimo bloco
 		self.create_ground(6, coords=(27, 0))
-		self.create_object('other/spikes/spikes-high', (28, 1), sprite_list=self.spikes) #spike
+		self.create_object('other/spikes/spikes-high', (28, 1)) #spike
 		self.create_background('other/plant/top-read', (30, 4))
 		self.create_background('other/plant/bottom-2', (30, 3))
 		self.create_background('other/plant/stem-vertical', (30, 2))
@@ -100,16 +93,15 @@ class Game(ge.Platformer):
 		self.create_tower(5, 3, coords=(37, 0))	
 
 # Fim da parte super legal, agora comeca a super chata
+		
 		"""
 		Italo's fase
 		Part 2
 		"""
-		self.world_theme = 'brown'
-
 		self.create_tower(3, 17, coords=(42, 0))
 		self.create_foreground('other/plant/red-4', (43, 3))
 		self.create_arrow('right', (45, 3))
-		self.create_object('other/items/yellowCrystal', (45.5, 6), sprite_list=self.coins) #coin
+		self.create_foreground('other/items/yellowCrystal', (46, 6)) #coin
 		self.create_block('grey', (46, 5))
 		self.create_foreground('other/plant/red-5', (49, 3))
 		self.create_background('other/plant/top-read', (50, 6))
@@ -126,8 +118,8 @@ class Game(ge.Platformer):
 		self.create_background('other/plant/leaf-1', (53, 5))
 		self.create_background('other/plant/stem-vertical', (53, 4))
 		self.create_background('other/plant/leaf-1', (53, 3))
-		self.create_object('other/spikes/spikes-high', (54, 3), sprite_list=self.spikes) #spike
-		self.create_object('other/items/yellowCrystal', (56.5, 6), sprite_list=self.coins) #coin
+		self.create_object('other/spikes/spikes-high', (54, 3), sprite_list=self.spike_list) #spike
+		self.create_foreground('other/items/yellowCrystal', (57, 6)) #coin
 		self.create_block('grey', (57, 5))
 		self.create_foreground('other/plant/red-2', (57, 3))
 		self.create_tower(4, 2, coords=(59, 0)) #smooth_ends=False
@@ -136,7 +128,7 @@ class Game(ge.Platformer):
 
 		self.create_ground(6, coords=(66, 2), end='sharp')
 		self.create_foreground('other/plant/red-3', (67, 3))
-		self.create_object('other/spikes/spikes-high', (68, 3), sprite_list=self.spikes) #spike
+		self.create_object('other/spikes/spikes-high', (68, 3)) #spike
 		self.create_background('other/plant/top-read', (70, 6))
 		self.create_background('other/plant/bottom-2', (70, 5))
 		self.create_background('other/plant/leaf-1', (70, 4))
@@ -153,7 +145,7 @@ class Game(ge.Platformer):
 		self.create_background('other/plant/top-read', (81, 4))
 		self.create_background('other/plant/leaf-1', (81, 3))
 		self.create_background('other/plant/bottom-2', (81, 2))
-		self.create_object('other/spikes/spikes-high', (82, 2), sprite_list=self.spikes) #spike
+		self.create_object('other/spikes/spikes-high', (82, 2)) #spike
 		self.create_foreground('other/plant/red-6', (83, 2))
 
 		self.create_foreground('other/plant/red-2', (86, 7))		
@@ -169,116 +161,63 @@ class Game(ge.Platformer):
 		self.create_tower(8, 16, coords=(102, 1))
 		self.create_foreground('other/plant/red-6', (101, 8))
 		self.create_ground(3, coords=(100, 7), end='round')
-		# self.create_block('grey', (98, 8))
+	#	self.create_block('grey', (98, 8))
 
-		self.create_object('other/spikes/spikes-high', (99, 2), sprite_list=self.spikes) #spike
+		self.create_object('other/spikes/spikes-high', (99, 2), sprite_list=self.spike_list) #spike
 		self.create_foreground('other/plant/red-6', (100, 2))
 		self.create_ground(5, coords=(98, 1))
 
 		"""
-		Gabrie's fase
-		Part 3
-		"""
-		self.world_theme = 'blue'
+		self.create_object('other/plant/red-3', (5, 7))
+		self.create_ground(2, coords=(42, 4))
+		self.create_ground(2, coords=(46, 6)) #plant
+		self.create_block('red', (50, 9)) #coin
+		self.create_tower(5, 4, coords=(49, 0))
+		self.create_ground(3, coords=(54, 2))
 
-		self.create_ground(2, coords=(120, 3))
-		self.create_tower(7, 2, coords=(124, 0))
-		self.create_tower(10, 2, coords=(127, 0))
-		self.create_tower(11, 1, coords=(130, 0))
-		self.create_block('grey', (130, 13))
-		self.create_ground(2, coords=(131, 9))
-		self.create_ground(2, coords=(136, 10))
-		self.create_ground(1, coords=(141, 10))
-		self.create_ground(2, coords=(134, 6))
-		self.create_ground(3, coords=(137, 4))
-		self.create_ground(2, coords=(141, 2))
-		self.create_ground(7, coords=(147, 0))
+		self.create_block('brown', (58, 5))
 		
-		self.create_object('other/items/yellowCrystal', (130, 12), sprite_list=self.coins)
-		self.create_object('other/items/yellowCrystal', (144, 13), sprite_list=self.coins)
-	
-		self.create_foreground('other/plant/red-1', (120, 4))
-		self.create_foreground('other/plant/red-4', (125, 7))
-		self.create_foreground('other/plant/red-3', (130, 11))
-		self.create_foreground('other/plant/red-6', (138, 5))	
-		self.create_arrow('top-right', (132, 10))
-		self.create_background('other/plant/top-read', (149, 4))
-		self.create_background('other/plant/bottom-2', (149, 3))
-		self.create_background('other/plant/stem-vertical', (149, 2))
-		self.create_background('other/plant/leaf-1', (149, 1))
-		self.create_foreground('other/plant/red-5', (151, 1))
-		self.create_foreground('other/plant/red-1', (135, 7))
+		self.create_ground(5, coords=(59, 6)) #fence
+		self.create_tower(8, 1, coords=(67, 0))
+		self.create_tower(7, 4, coords=(68, 0))
+		
+		self.create_foreground('other/plant/red-3', (46, 7))
+		self.create_foreground('other/plant/red-1', (55, 3))
+
+		self.create_fence('left', (60, 7))
+		self.create_fence('middle', (61, 7))
+		self.create_fence('right', (62, 7))
+		"""
 
 	def init_enemies(self):
 		pass
 
 	def init_items(self):
-		pass
+		arcade.play_sound(self.start_sound)
+		self.coin_list = SpriteList()
+		self.spike_list = SpriteList()
 
 	def init(self):
 		self.init_world()
 		self.init_items()
 		self.init_enemies()
 		
-	def collide_coins(self):
-		self.coins.update()
-		coins_hit_list = arcade.check_for_collision_with_list(self.player, self.coins)
-
-		for coin in coins_hit_list:
-			coin.remove_from_sprite_lists()
-			self.score_coins += 1
-			arcade.play_sound(self.coin_sound)
-	
-	def collide_spikes(self):
-		self.spikes.update()
-
-		if self.player_life == 0:
-			self.game_over()
-
-		spikes_hit_list = arcade.check_for_collision_with_list(self.player, self.spikes)
-
-		for spike in spikes_hit_list:
-			spike.remove_from_sprite_lists()
-			self.player_life -= 1
-			arcade.play_sound(self.lose_life_sound)
-
-	def player_info(self):
-		text_x = (self.viewport_horizontal_start + self.width) - (self.width * 0.15)
-		text_y = (self.viewport_vertical_start + self.height) - (self.height * 0.1)
-		
-		score_text = f"SCORE {self.score_coins}"
-		arcade.draw_text(score_text, text_x, text_y, arcade.csscolor.BLACK, 20, font_name=('gaguita/src/fonts/ka1.ttf'))
-
-		life_text = f"LIFE {self.player_life}"
-		arcade.draw_text(life_text, text_x, text_y - 30, arcade.csscolor.BLACK, 20, font_name=('gaguita/src/fonts/ka1.ttf'))
-
-	def game_over(self):
-		#arcade.stop_sound(self)
-		#self.init()
-		#super().player.player_initial_tile = 4, 1
-		#super().physics_engine.update()
-		arcade.pause(2)
-		arcade.close_window()
-		pass
-
 	def on_update(self, dt):
 		super().on_update(dt)
-
-		self.collide_coins()
-		self.collide_spikes()
-
+		
+		if self.player.center_y < 0:
+			exit()
+		
 		if self.player.change_y > 0:
 			if not self.jumping:
 				arcade.play_sound(self.jump_sound)
 			self.jumping = True
 		else:
-			self.jumping = False
-		
-		if self.player.center_y < 0:
-			self.game_over()
-
-		if self.player.change_x == 0:
-			self.game_over()
+			self.jumping = False		
+			
+		cols = arcade.check_for_collision_with_list(self.player, self.spike_list)
+		if cols:
+			print(cols)
 		
 
 if __name__ == "__main__":
