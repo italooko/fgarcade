@@ -1,6 +1,7 @@
 import fgarcade as ge
 import arcade
 from arcade import SpriteList
+from fgarcade.enums import Role
 
 
 class Player(ge.Player):
@@ -14,32 +15,31 @@ class Game(ge.Platformer):
 	Gaguita's Game
 	"""
 
-	title = 'You Need To Calm Down'
-	width = 1850
-	height = 1000
+	title = 'Gaguita: Platformer Game'
+	width = 1850 #1500 #1000
+	height = 1000 #844 #563
 	world_theme = 'brown'
-	#background_color = (120, 213, 219)
-	#background_theme = 'yellow'
+	background_color = (120, 213, 219)
+	background_near = SpriteList(use_spatial_hash=False)
+	background_fixed = SpriteList(use_spatial_hash=False)
+	
 	player_initial_tile = -2, 1.5
-	jumping = False
-
-	player_class = Player
+	player_class = Player 
 	viewport_margin_horizontal = 1500
 	viewport_margin_vertical = 0
 
 	score_coins = 0
 	player_life = 3
+	jumping = False
 
 	#start_sound = arcade.load_sound('gaguita/src/sounds/MattOglseby-3.wav')
 	coin_sound = arcade.load_sound('gaguita/src/sounds/SFX1.wav')
 	jump_sound = arcade.load_sound('gaguita/src/sounds/Sword-Swing.wav')
-	lose_life_sound = arcade.load_sound('gaguita/src/sounds/SFX5.wav')
+	life_lost_sound = arcade.load_sound('gaguita/src/sounds/SFX5.wav')
+	enemy_killed_sound = arcade.load_sound('gaguita/src/sounds/Lazer-Ricochet.wav')
 
 	def init_world(self):
 		#arcade.play_sound(self.start_sound)
-		
-		self.coins = SpriteList()
-		self.spikes = SpriteList()
 
 		"""
 		Gui's fase
@@ -126,15 +126,17 @@ class Game(ge.Platformer):
 		self.create_background('other/plant/leaf-1', (53, 5))
 		self.create_background('other/plant/stem-vertical', (53, 4))
 		self.create_background('other/plant/leaf-1', (53, 3))
+		self.create_enemy(coords=(52, 3), walk_size=4) #enemy
 		self.create_object('other/spikes/spikes-high', (54, 3), sprite_list=self.spikes) #spike
 		self.create_object('other/items/yellowCrystal', (56.5, 6), sprite_list=self.coins) #coin
 		self.create_block('grey', (57, 5))
 		self.create_foreground('other/plant/red-2', (57, 3))
 		self.create_tower(4, 2, coords=(59, 0)) #smooth_ends=False
-		self.create_tower(6, 3, coords=(61, 0))
-		self.create_foreground('other/plant/red-6', (62, 6))
+		self.create_tower(5, 3, coords=(61, 0))
+		self.create_foreground('other/plant/red-6', (62, 5))
 
 		self.create_ground(6, coords=(66, 2), end='sharp')
+		self.create_enemy(coords=(66, 3), walk_size=6) #enemy
 		self.create_foreground('other/plant/red-3', (67, 3))
 		self.create_object('other/spikes/spikes-high', (68, 3), sprite_list=self.spikes) #spike
 		self.create_background('other/plant/top-read', (70, 6))
@@ -143,11 +145,13 @@ class Game(ge.Platformer):
 		self.create_background('other/plant/leaf-2', (70, 3))
 
 		self.create_platform(5, coords=(74, 4))
+		self.create_enemy(coords=(74, 5), walk_size=4) #enemy
 		self.create_foreground('other/plant/red-2', (76, 5))
 		self.create_arrow('right', (81, 7))
 		self.create_platform(1, coords=(81, 6))
 		
 		self.create_ground(10, coords=(75, 1), end='sharp')
+		self.create_enemy(coords=(76, 2), walk_size=7) #enemy
 		self.create_foreground('other/plant/red-1', (77, 2))
 		self.create_foreground('other/plant/red-1', (80, 2))
 		self.create_background('other/plant/top-read', (81, 4))
@@ -161,15 +165,14 @@ class Game(ge.Platformer):
 		self.create_arrow('top-right', (91, 4))
 		self.create_platform(1, coords=(91, 3))
 		#self.create_object('other/items/discGreen', (96, 3)) #life
-		#self.create_platform(1, coords=(96, 2))
-		#self.create_object('other/items/yellowCrystal', (95, 6)) #coin
+		self.create_object('other/items/yellowCrystal', (97, 6)) #coin
 		self.create_platform(4, coords=(95, 5))
 
 		self.create_arrow('right', (103, 9))
 		self.create_tower(8, 16, coords=(102, 1))
 		self.create_foreground('other/plant/red-6', (101, 8))
 		self.create_ground(3, coords=(100, 7), end='round')
-		# self.create_block('grey', (98, 8))
+		self.create_block('grey', (100, 5))
 
 		self.create_object('other/spikes/spikes-high', (99, 2), sprite_list=self.spikes) #spike
 		self.create_foreground('other/plant/red-6', (100, 2))
@@ -209,18 +212,58 @@ class Game(ge.Platformer):
 		self.create_foreground('other/plant/red-5', (151, 1))
 		self.create_foreground('other/plant/red-1', (135, 7))
 
+	def create_enemy(self, coords=(0, 0), walk_size=4):
+		"""
+		Creates enemies in the world
+		"""
+		x, y = coords
+
+		enemy_path = 'fgarcade/data/themes/abstract/enemy/'
+		border_path = '../../../../../fgarcade/gaguita/src/img/'
+
+		# Bordas invisiveis para limitar o movimento do inimigo
+		self.create_object(border_path + 'transparent', coords=(x - 1, y), role=Role.BACKGROUND, sprite_list=self.enemy_limit)
+		self.create_object(border_path + 'transparent', coords=(x + walk_size, y), role=Role.BACKGROUND, sprite_list=self.enemy_limit)
+		
+		x, y = int(64 * x + 32), int((64 * y) + (44/2))
+
+		enemy = arcade.AnimatedWalkingSprite()
+		enemy.stand_left_textures = []
+		enemy.stand_left_textures.append(arcade.load_texture(enemy_path + "enemyWalking_1.png", scale=1, mirrored=True))
+		
+		enemy.stand_right_textures = []
+		enemy.stand_right_textures.append(arcade.load_texture(enemy_path + "enemyWalking_1.png", scale=1))
+		
+		enemy.walk_left_textures = []
+		for i in (2, 1, 2, 1):
+			enemy.walk_left_textures.append(arcade.load_texture(enemy_path + "enemyWalking_" + str(i) + ".png", scale=1, mirrored=True))
+		
+		enemy.walk_right_textures = []
+		for i in (2, 1, 2, 1):
+			enemy.walk_right_textures.append(arcade.load_texture(enemy_path + "enemyWalking_" + str(i) + ".png", scale=1))
+		
+		enemy.change_x = 1.5
+		enemy.texture_change_distance = 20
+		enemy.left = x
+		enemy.bottom = y
+
+		self.enemies.append(enemy)
+		return enemy
+	
 	def init_enemies(self):
-		pass
+		self.enemies = SpriteList()
+		self.enemy_limit = SpriteList()
 
 	def init_items(self):
-		pass
+		self.coins = SpriteList()
+		self.spikes = SpriteList()
 
 	def init(self):
-		self.init_world()
 		self.init_items()
 		self.init_enemies()
+		self.init_world()
 		
-	def collide_coins(self):
+	def collision_with_coins(self):
 		self.coins.update()
 		coins_hit_list = arcade.check_for_collision_with_list(self.player, self.coins)
 
@@ -229,7 +272,7 @@ class Game(ge.Platformer):
 			self.score_coins += 1
 			arcade.play_sound(self.coin_sound)
 	
-	def collide_spikes(self):
+	def collision_with_spikes(self):
 		self.spikes.update()
 
 		if self.player_life == 0:
@@ -240,32 +283,44 @@ class Game(ge.Platformer):
 		for spike in spikes_hit_list:
 			spike.remove_from_sprite_lists()
 			self.player_life -= 1
-			arcade.play_sound(self.lose_life_sound)
+			arcade.play_sound(self.life_lost_sound)
+	
+	def collision_with_enemies(self):
+		self.enemies.update()
+		enemies_hit_list = arcade.check_for_collision_with_list(self.player, self.enemies)
+
+		for enemy in self.enemies:
+			for border in self.enemy_limit:
+				if arcade.check_for_collision(enemy, border):
+					enemy.change_x *= -1
+
+		for enemy in enemies_hit_list:
+			if self.player.change_y < 0:
+				enemy.remove_from_sprite_lists()
+				arcade.play_sound(self.enemy_killed_sound)
+			else:
+				self.player_life -= 1
+				arcade.play_sound(self.life_lost_sound)
 
 	def player_info(self):
 		text_x = (self.viewport_horizontal_start + self.width) - (self.width * 0.15)
 		text_y = (self.viewport_vertical_start + self.height) - (self.height * 0.1)
 		
-		score_text = f"SCORE {self.score_coins}"
-		arcade.draw_text(score_text, text_x, text_y, arcade.csscolor.BLACK, 20, font_name=('gaguita/src/fonts/ka1.ttf'))
+		score_text = f"SCORE:  {self.score_coins}"
+		arcade.draw_text(score_text, text_x, text_y, arcade.csscolor.WHITE, 45, font_name=('fgarcade/data/fonts/monogram_extended.ttf'))
 
-		life_text = f"LIFE {self.player_life}"
-		arcade.draw_text(life_text, text_x, text_y - 30, arcade.csscolor.BLACK, 20, font_name=('gaguita/src/fonts/ka1.ttf'))
-
-	def game_over(self):
-		#arcade.stop_sound(self)
-		#self.init()
-		#super().player.player_initial_tile = 4, 1
-		#super().physics_engine.update()
-		arcade.pause(2)
-		arcade.close_window()
-		pass
+		life_text = f"LIFE:  {self.player_life}"
+		arcade.draw_text(life_text, text_x, text_y - 35, arcade.csscolor.WHITE, 45, font_name=('fgarcade/data/fonts/monogram_extended.ttf'))
 
 	def on_update(self, dt):
 		super().on_update(dt)
-
-		self.collide_coins()
-		self.collide_spikes()
+		
+		self.enemies.update()
+		self.enemies.update_animation()
+		
+		self.collision_with_coins()
+		self.collision_with_spikes()
+		self.collision_with_enemies()
 
 		if self.player.change_y > 0:
 			if not self.jumping:
@@ -279,7 +334,24 @@ class Game(ge.Platformer):
 
 		if self.player.change_x == 0:
 			self.game_over()
-		
+
+	def draw_elements(self):
+		super().draw_elements()
+
+		self.coins.draw()
+		self.spikes.draw()
+		self.enemies.draw()
+		self.enemy_limit.draw()
+		self.player_info()
+	
+	def game_over(self):
+		#arcade.stop_sound(self)
+		#self.init()
+		#super().player.player_initial_tile = 4, 1
+		#super().physics_engine.update()
+		#arcade.pause(2)
+		#arcade.close_window()
+		pass
 
 if __name__ == "__main__":
 	Game().run()
