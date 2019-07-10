@@ -134,6 +134,7 @@ class Game(ge.Platformer):
 		self.create_background('other/plant/bottom-2', (50, 5))
 		self.create_background('other/plant/stem-vertical', (50, 4))
 		self.create_background('other/plant/leaf-1', (50, 3))
+		self.create_object('other/items/discGreen', (51, 4), sprite_list=self.lifes) #life
 		self.create_background('other/plant/top-blue', (52, 7))
 		self.create_background('other/plant/leaf-2', (52, 6))
 		self.create_background('other/plant/leaf-1', (52, 5))
@@ -188,7 +189,7 @@ class Game(ge.Platformer):
 		#self.create_arrow('right', (103, 9))
 		#self.create_tower(9, 4, coords=(102, 0))
 		self.create_foreground('other/plant/red-6', (101, 8))
-		self.create_object('other/items/discGreen', (104, 8), sprite_list=self.lifes) #life
+		self.create_object('other/items/discGreen', (102, 8), sprite_list=self.lifes) #life
 		self.create_ground(3, coords=(100, 7), end='round')
 		self.create_block('grey', (100, 5))
 
@@ -201,39 +202,70 @@ class Game(ge.Platformer):
 		Part 3
 		"""
 		self.world_theme = 'blue'
-
+		
+		self.create_arrow('sign', (105, 7))
+		self.create_foreground('other/plant/dark-2', (107, 7))
 		self.create_tower(7, 4, coords=(105, 0))
-		self.create_tower(5, 4, coords=(109, 0))
-		#self.create_tower(3, 2, coords=(113, 0))
+
+		self.create_foreground('other/plant/dark-6', (110, 5))
+		self.create_foreground('other/plant/top-yellow', (111, 6))
+		self.create_foreground('other/plant/bottom-2', (111, 5))
+		self.create_tower(5, 5, coords=(108, 0))
+
+		self.create_object('other/spikes/spikes-high', (113, 0), sprite_list=self.spikes) #spike
+		self.create_object('other/spikes/spikes-high', (114, 0), sprite_list=self.spikes) #spike
+		self.create_object('other/spikes/spikes-high', (115, 0), sprite_list=self.spikes) #spike
+		self.create_object('other/spikes/spikes-high', (116, 0), sprite_list=self.spikes) #spike
+		self.create_object('other/spikes/spikes-high', (117, 0), sprite_list=self.spikes) #spike
+		self.create_object('other/spikes/spikes-high', (118, 0), sprite_list=self.spikes) #spike
+		self.create_object('other/spikes/spikes-high', (119, 0), sprite_list=self.spikes) #spike
+		self.create_object('other/spikes/spikes-high', (120, 0), sprite_list=self.spikes) #spike
+		self.create_object('other/spikes/spikes-high', (121, 0), sprite_list=self.spikes) #spike
+		self.create_object('other/spikes/spikes-high', (122, 0), sprite_list=self.spikes) #spike
+
+		self.create_enemy(coords=(114, 4), walk_size=4) #enemy
+		self.create_foreground('other/plant/blue-6', (115, 4))
 		self.create_ground(4, coords=(114, 3), end='round')
 
-		self.create_ground(2, coords=(120, 3), end='sharp')
-		self.create_tower(7, 3, coords=(123, 0))
-		self.create_tower(8, 3, coords=(126, 0))
-		self.create_tower(9, 1, coords=(129, 0))
-		self.create_block('grey', (130, 13))
-		self.create_ground(2, coords=(131, 9))
-		self.create_ground(2, coords=(136, 10))
-		self.create_ground(1, coords=(141, 10))
-		self.create_ground(2, coords=(134, 6))
-		self.create_ground(3, coords=(137, 4))
-		self.create_ground(2, coords=(141, 2))
-		self.create_ground(7, coords=(147, 0))
-		
-		self.create_object('other/items/yellowCrystal', (130, 12), sprite_list=self.coins)
-		self.create_object('other/items/yellowCrystal', (144, 13), sprite_list=self.coins)
-	
+		self.create_block('grey', (116, 9))
+		self.create_block('grey', (120, 11))
+
 		self.create_foreground('other/plant/blue-1', (120, 4))
-		self.create_foreground('other/plant/blue-4', (125, 7))
-		self.create_foreground('other/plant/blue-3', (130, 11))
-		self.create_foreground('other/plant/blue-6', (138, 5))	
-		self.create_arrow('top-right', (132, 10))
-		self.create_background('other/plant/top-read', (149, 4))
-		self.create_background('other/plant/bottom-2', (149, 3))
-		self.create_background('other/plant/stem-vertical', (149, 2))
-		self.create_background('other/plant/leaf-1', (149, 1))
-		self.create_foreground('other/plant/red-5', (151, 1))
-		self.create_foreground('other/plant/red-1', (135, 7))
+		self.create_ground(2, coords=(120, 3), end='sharp')
+		self.create_foreground('other/plant/blue-4', (124, 6))
+		self.create_tower(6, 3, coords=(123, 0))
+		
+		
+		self.create_foreground('other/plant/blue-5', (128, 7))
+		self.create_tower(7, 3, coords=(127, 0))
+
+		self.create_foreground('other/plant/blue-2', (132, 8))
+		self.create_tower(8, 3, coords=(131, 0))
+		
+
+		self.create_arrow('top-right', (136, 10))
+		self.create_object('other/items/yellowCrystal', (137, 10), sprite_list=self.coins) #coin
+		self.create_platform(2, coords=(136, 9))
+		
+		self.create_enemy(coords=(140, 11), walk_size=2) #enemy
+		self.create_platform(2, coords=(140, 10))
+		self.create_object('other/items/yellowCrystal', (145, 11), sprite_list=self.coins) #coin
+		self.create_platform(2, coords=(144, 10))
+
+		self.create_ground(2, coords=(137, 6), end='round')
+		self.create_foreground('other/plant/blue-6', (141, 5))
+		self.create_ground(3, coords=(140, 4), end='round')
+		self.create_ground(2, coords=(144, 2), end='round')
+
+		self.create_block('grey', (150, 8))
+		self.create_block('grey', (154, 6))
+		self.create_background('other/plant/top-read', (150, 4))
+		self.create_background('other/plant/bottom-2', (150, 3))
+		self.create_background('other/plant/stem-vertical', (150, 2))
+		self.create_background('other/plant/leaf-1', (150, 1))
+		self.create_foreground('other/plant/blue-5', (151, 1))
+		self.create_object('other/spikes/spikes-low', (153, 1), sprite_list=self.spikes) #spike
+		self.create_ground(7, coords=(149, 0))
 
 	def create_enemy(self, coords=(0, 0), walk_size=4):
 		"""
@@ -370,7 +402,11 @@ class Game(ge.Platformer):
 		
 		if self.player_life <= 0:
 			self.game_over()
-			
+		
+		if self.player.center_x > self.width:
+			#self.next_level()
+			pass
+		
 		if self.player.center_y < 10:
 			self.game_over()
 
